@@ -2,6 +2,9 @@ import argparse
 import lib.Tools
 import threading
 import sys
+import openstack
+import os
+import json
 from collections import deque
 
 class MyParser(argparse.ArgumentParser):
@@ -22,16 +25,28 @@ parser.add_argument('--hint', dest='hint', default="", type=str,
 parser.add_argument('-t', '--tag', dest='tag', type=str,
                     help='What role to tag the nodes with', required=True)
 
-parser.add_argument('-c', '--clear', dest='clear', default="False", type=bool,
+parser.add_argument('-c', '--clear', '--clean', dest='clear', action="store_true",
                     help='Clean existing tags from all nodes')
-
-parser.add_argument('-s', '--stackrc', dest='stackrc', default="$HOME/stackrc",
-                    type=str, help='Path to stackrc file')
 
 args = parser.parse_args()
 
-env_setup = "source " + args.stackrc + ";"
-nodes = deque(lib.Tools.get_uuid_list(env_setup))
+if 'OS_AUTH_URL' not in os.environ:
+    print("Please source a cloud rc file")
+    exit(1)
+
+
+auth_args = {
+    'auth_url': os.environ['OS_AUTH_URL'],
+    'project_name': 'admin',
+    'username': os.environ['OS_USERNAME'],
+    'password': os.environ['OS_PASSWORD'],
+}
+
+
+conn = openstack.connection.Connection(**auth_args)
+
+nodes = deque(lib.Tools.get_uuid_list(conn))
+
 total_nodes = len(nodes)
 hint_enabled = (len(args.hint) > 0)
 
@@ -39,7 +54,7 @@ hint_enabled = (len(args.hint) > 0)
 if args.clear == True:
     clear_threads = []
     for uuid in nodes:
-        clear_thread = threading.Thread(target=lib.Tools.clean_tags, args=(uuid, env_setup))
+        clear_thread = threading.Thread(target=lib.Tools.clean_tags, args=(uuid, conn))
         clear_threads.append(clear_thread)
         clear_thread.start()
     for clear_thread in clear_threads:
@@ -50,7 +65,7 @@ tag_threads = []
 for thread_idx in range(args.num_nodes):
     tag_thread = threading.Thread(target=lib.Tools.tag_node,
                                   args=(nodes, args.num_nodes,
-                                       args.tag, env_setup,
+                                       args.tag, conn,
                                        hint_enabled, args.hint))
     tag_threads.append(tag_thread)
     tag_thread.start()
