@@ -36,7 +36,7 @@ total_nodes = len(nodes)
 hint_enabled = (len(args.hint) > 0)
 
 # Issue one thread for each node
-if args.clear:
+if args.clear == True:
     clear_threads = []
     for uuid in nodes:
         clear_thread = threading.Thread(target=lib.Tools.clean_tags, args=(uuid, env_setup))
@@ -47,13 +47,13 @@ if args.clear:
 
 # Issue a thread for each node being tagged
 tag_threads = []
-for thread_idx in args.num_nodes:
-    tag_thread = threading.Thread(target=lib.Tools.tag_node(),
+for thread_idx in range(args.num_nodes):
+    tag_thread = threading.Thread(target=lib.Tools.tag_node,
                                   args=(nodes, args.num_nodes,
                                        args.tag, env_setup,
                                        hint_enabled, args.hint))
     tag_threads.append(tag_thread)
-    tag_threads.start()
+    tag_thread.start()
 
 for thread in tag_threads:
     thread.join()
