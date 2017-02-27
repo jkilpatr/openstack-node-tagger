@@ -45,15 +45,14 @@ auth_args = {
 
 conn = openstack.connection.Connection(**auth_args)
 
-nodes = deque(lib.Tools.get_uuid_list(conn))
-
-total_nodes = len(nodes)
 hint_enabled = (len(args.hint) > 0)
 
 # Issue one thread for each node
 if args.clear == True:
+    nodes = deque(lib.Tools.get_uuid_list(conn))
     clear_threads = []
-    for uuid in nodes:
+    while len(nodes):
+        uuid = nodes.pop()
         clear_thread = threading.Thread(target=lib.Tools.clean_tags, args=(uuid, conn))
         clear_threads.append(clear_thread)
         clear_thread.start()
@@ -62,9 +61,10 @@ if args.clear == True:
 
 # Issue a thread for each node being tagged
 tag_threads = []
+nodes = deque(lib.Tools.get_uuid_list(conn))
 for thread_idx in range(args.num_nodes):
     tag_thread = threading.Thread(target=lib.Tools.tag_node,
-                                  args=(nodes, args.num_nodes,
+                                  args=(nodes, thread_idx,
                                        args.tag, conn,
                                        hint_enabled, args.hint))
     tag_threads.append(tag_thread)
