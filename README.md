@@ -1,4 +1,4 @@
-# openstack-node-tagger
+# ostag
 A tool for tagging/pinning nodes in Openstack deployments
 
 Usage:
