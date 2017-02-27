@@ -20,7 +20,7 @@ parser.add_argument('-n', '--nodes', dest='num_nodes', type=int,
                     help='The number of nodes to tag', required=True)
 
 parser.add_argument('--hint', dest='hint', default="", type=str,
-                    help='Scheduling hint to search for in ironic node-show')
+                    help='Scheduling hint to search for in ironic node properties')
 
 parser.add_argument('-t', '--tag', dest='tag', type=str,
                     help='What role to tag the nodes with', required=True)

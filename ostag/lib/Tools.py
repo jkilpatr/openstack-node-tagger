@@ -28,7 +28,7 @@ def node_details_contain(uuid, pattern, conn):
 
 def node_already_tagged(uuid, conn):
     properties = conn.bare_metal.get_node(uuid).properties
-    if 'node' in properties['capabilities']:
+    if 'node' in properties['capabilities'] or 'profile' in properties['capabilities']:
         return True
     else:
         return False
@@ -39,10 +39,10 @@ def clean_tags(uuid, conn):
         pairs = node.properties['capabilities'].split(',')
         capabilities = "'"
         for pair in pairs:
-            if not 'node' in pair:
+            if not 'node' in pair and not 'profile' in pair:
                capabilities = capabilities + pair + ","
         capabilities = capabilities.rstrip(',')
-        capabilities = capabilities + "' " 
+        capabilities = capabilities + "' "
         cmd = "openstack baremetal node set --property capabilities=" + capabilities + uuid
         run_cmd(cmd)
 
