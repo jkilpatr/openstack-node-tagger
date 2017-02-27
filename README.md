@@ -22,6 +22,7 @@ rather than only the ones it ends up scheduling on. A workflow for changing the 
 like this.
 
 	ostag -n 3 -t controller -c
+
         ostag -n 50 -t compute
 
 Where the first run clears existing tags on all 53 nodes, then pins three control instances, and the second command
