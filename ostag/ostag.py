@@ -43,35 +43,37 @@ auth_args = {
 }
 
 
-conn = openstack.connection.Connection(**auth_args)
 
-hint_enabled = (len(args.hint) > 0)
+def main():
+	conn = openstack.connection.Connection(**auth_args)
 
-# Issue one thread for each node
-if args.clear == True:
-    nodes = deque(lib.Tools.get_uuid_list(conn))
-    clear_threads = []
-    while len(nodes):
-        uuid = nodes.pop()
-        clear_thread = threading.Thread(target=lib.Tools.clean_tags, args=(uuid, conn))
-        clear_threads.append(clear_thread)
-        clear_thread.start()
-    for clear_thread in clear_threads:
-        clear_thread.join()
+	hint_enabled = (len(args.hint) > 0)
 
-# Issue a thread for each node being tagged
-tag_threads = []
-nodes = deque(lib.Tools.get_uuid_list(conn))
-for thread_idx in range(args.num_nodes):
-    tag_thread = threading.Thread(target=lib.Tools.tag_node,
-                                  args=(nodes, thread_idx,
-                                       args.tag, conn,
-                                       hint_enabled, args.hint))
-    tag_threads.append(tag_thread)
-    tag_thread.start()
+	# Issue one thread for each node
+	if args.clear == True:
+	    nodes = deque(lib.Tools.get_uuid_list(conn))
+	    clear_threads = []
+	    while len(nodes):
+		uuid = nodes.pop()
+		clear_thread = threading.Thread(target=lib.Tools.clean_tags, args=(uuid, conn))
+		clear_threads.append(clear_thread)
+		clear_thread.start()
+	    for clear_thread in clear_threads:
+		clear_thread.join()
 
-for thread in tag_threads:
-    thread.join()
+	# Issue a thread for each node being tagged
+	tag_threads = []
+	nodes = deque(lib.Tools.get_uuid_list(conn))
+	for thread_idx in range(args.num_nodes):
+	    tag_thread = threading.Thread(target=lib.Tools.tag_node,
+					  args=(nodes, thread_idx,
+					       args.tag, conn,
+					       hint_enabled, args.hint))
+	    tag_threads.append(tag_thread)
+	    tag_thread.start()
+
+	for thread in tag_threads:
+	    thread.join()
 
 
 
