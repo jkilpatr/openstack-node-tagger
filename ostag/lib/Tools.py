@@ -28,7 +28,7 @@ def node_details_contain(uuid, pattern, conn):
 
 def node_already_tagged(uuid, conn):
     properties = conn.bare_metal.get_node(uuid).properties
-    if 'node' in properties['capabilities'] or 'profile' in properties['capabilities']:
+    if 'node' in str(properties['capabilities']) or 'profile' in str(properties['capabilities']):
         return True
     else:
         return False

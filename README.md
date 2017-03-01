@@ -27,5 +27,25 @@ like this.
 Where the first run clears existing tags on all 53 nodes, then pins three control instances, and the second command
 will pin the remaining 50 nodes as compute instances.
 
+After that you can deploy your overcloud with the scheduler hints file to determine your mapping from tags to roles.
+
+	openstack overcloud deploy --templates -e scheduler-hints.yaml
+
+See the example contents of a scheduler-hints.yaml file below, if you don't have any custom roles you can just copy
+that into a file. In the future I might have ostag create this file for you dynamically based on the mappings you
+pass, but since most deployments take more than one run I haven't done that yet.
+
+	parameter_defaults:
+	  ControllerSchedulerHints:
+	    'capabilities:node': 'controller-%index%'
+	  NovaComputeSchedulerHints:
+	    'capabilities:node': 'compute-%index%'
+	  BlockStorageSchedulerHints:
+	    'capabilities:node': 'blockstorage-%index%'
+	  ObjectStorageSchedulerHints:
+	    'capabilities:node': 'objectstorage-%index%'
+	  CephStorageSchedulerHints:
+	    'capabilities:node': 'cephstorage-%index%'
+
 If you need processing of more complex rules I suggest using [profile matching](https://docs.openstack.org/developer/tripleo-docs/advanced_deployment/profile_matching.html) but since profile matching doesnt automatically pin
 instances to nodes like this script does you may experience scheduling problems on large deployments.
