@@ -23,7 +23,7 @@ instances could run on that baremetal node, but with no details as to which inst
 make sure your instances land in the right place, pinning will do the same and accelerate your deployment
 time if you have enough nodes for scheduling contention to be an issue.
 
-You can also pass --hint <search string> which will search the node properties for a string
+You can also pass `--hint <search string>` which will search the node properties for a string
 for example if you wanted to schedule controllers on machine with 24 cpus you could run.
 
 	ostag -n 3 -t controller --hint "'cpus': u'24'"

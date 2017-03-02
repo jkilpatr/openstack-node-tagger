@@ -74,9 +74,9 @@ def tag_node(nodes, num, tag, pin, conn, hint_enabled=False, hint=""):
         node = conn.bare_metal.get_node(uuid)
         capabilities = node.properties['capabilities']
 
-        if len(tag) > 0:
+        if len(pin) > 0:
            value = "node:" + pin + "-" + str(num)
-        elif len(pin) > 0:
+        elif len(tag) > 0:
            value = "profile:" + tag
         if len(capabilities) > 0:
            capabilities = "'" + value + "," + capabilities + "' "
