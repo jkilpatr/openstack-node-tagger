@@ -23,7 +23,10 @@ parser.add_argument('--hint', dest='hint', default="", type=str,
                     help='Scheduling hint to search for in ironic node properties')
 
 parser.add_argument('-t', '--tag', dest='tag', type=str,
-                    help='What role to tag the nodes with', required=True)
+                    help='What role to tag the nodes with', default="")
+
+parser.add_argument('-p', '--pin', dest='pin', type=str,
+                    help='What role to pin the nodes to', default="")
 
 parser.add_argument('-c', '--clear', '--clean', dest='clear', action="store_true",
                     help='Clean existing tags from all nodes')
@@ -42,7 +45,9 @@ auth_args = {
     'password': os.environ['OS_PASSWORD'],
 }
 
-
+if len(args.tag) > 0 and len(args.pin) > 0:
+        print("You can't use both tagging and pins at the same time")
+        exit(1)
 
 def main():
 	conn = openstack.connection.Connection(**auth_args)
@@ -67,7 +72,7 @@ def main():
 	for thread_idx in range(args.num_nodes):
 	    tag_thread = threading.Thread(target=lib.Tools.tag_node,
 					  args=(nodes, thread_idx,
-					       args.tag, conn,
+					       args.tag, args.pin, conn,
 					       hint_enabled, args.hint))
 	    tag_threads.append(tag_thread)
 	    tag_thread.start()

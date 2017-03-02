@@ -46,7 +46,7 @@ def clean_tags(uuid, conn):
         cmd = "openstack baremetal node set --property capabilities=" + capabilities + uuid
         run_cmd(cmd)
 
-def tag_node(nodes, num, tag, conn, hint_enabled=False, hint=""):
+def tag_node(nodes, num, tag, pin, conn, hint_enabled=False, hint=""):
     try:
         uuid = nodes.pop()
         if hint_enabled:
@@ -57,7 +57,7 @@ def tag_node(nodes, num, tag, conn, hint_enabled=False, hint=""):
                 uuid = nodes.pop()
                 tries = tries + 1
                 if tries > len(nodes):
-                    print ("No untagged nodes found that match hint " + hint)
+                    print ("No untagged/unpinned nodes found that match hint " + hint)
                     print ("Either none exist or we ran out before tagging all " + num)
                     exit(1)
         else:
@@ -67,16 +67,21 @@ def tag_node(nodes, num, tag, conn, hint_enabled=False, hint=""):
                 uuid = nodes.pop()
                 tries = tries + 1
                 if tries > len(nodes):
-                    print ("Not enough untagged nodes left ")
+                    print ("Not enough untagged/unpinned nodes left ")
                     print ("clear tags and retag as appropriate")
                     exit(1)
 
         node = conn.bare_metal.get_node(uuid)
         capabilities = node.properties['capabilities']
+
+        if len(tag) > 0:
+           value = "node:" + pin + "-" + str(num)
+        elif len(pin) > 0:
+           value = "profile:" + tag
         if len(capabilities) > 0:
-           capabilities = "'" + capabilities + ",node:" + tag + "-" + str(num) + "' "
+           capabilities = "'" + value + "," + capabilities + "' "
         else:
-           capabilities = "'node:" + tag + "-" + str(num) + "' "
+           capabilities = "'" + value  + "' "
         cmd = "openstack baremetal node set --property capabilities=" + capabilities + uuid
         run_cmd(cmd)
 

@@ -1,5 +1,5 @@
 # ostag
-A tool for tagging/pinning nodes in Openstack deployments
+A tool for tagging/pinning nodes in OpenStack deployments
 
 Usage:
 
@@ -7,9 +7,21 @@ run the following command in a virtualenv or at the system level if your brave
 
 	pip install git+https://github.com/jkilpatr/openstack-node-tagger
 
-Then run
+Then run the following to tag nodes
 
  	ostag -n <number of nodes to tag> -t <role name>
+
+Or the following to pin nodes
+
+	ostag -n <number of nodes to tag> -p <role name>
+
+Node tagging ensures that only a specific node type will land on the tagged baremetal node
+pinning goes a step further and ensures that only a specific instance can occupy a pinned node.
+For example you may pin a baremetal node to `node:controller-2` which would ensure only the second
+controller instance could ever run on it. Whereas a tag `profile:control` would mean only controller
+instances could run on that baremetal node, but with no details as to which instance. Tagging will
+make sure your instances land in the right place, pinning will do the same and accelerate your deployment
+time if you have enough nodes for scheduling contention to be an issue.
 
 You can also pass --hint <search string> which will search the node properties for a string
 for example if you wanted to schedule controllers on machine with 24 cpus you could run.
@@ -24,10 +36,11 @@ like this.
 	ostag -n 3 -t controller -c
 	ostag -n 50 -t compute
 
-Where the first run clears existing tags on all 53 nodes, then pins three control instances, and the second command
-will pin the remaining 50 nodes as compute instances.
+Where the first run clears existing tags and pins on all 53 nodes, then tags three control instances, and
+the second command will tag the remaining 50 nodes as compute instances.
 
-After that you can deploy your overcloud with the scheduler hints file to determine your mapping from tags to roles.
+After that, if you are just tagging you are done and can ignore this section, if you are using node pinning you need
+to deploy your overcloud with a scheduler hints file to determine your mapping from pins to roles.
 
 	openstack overcloud deploy --templates -e scheduler-hints.yaml
 
@@ -47,5 +60,5 @@ pass, but since most deployments take more than one run I haven't done that yet.
 	  CephStorageSchedulerHints:
 	    'capabilities:node': 'cephstorage-%index%'
 
-If you need processing of more complex rules I suggest using [profile matching](https://docs.openstack.org/developer/tripleo-docs/advanced_deployment/profile_matching.html) but since profile matching doesnt automatically pin
-instances to nodes like this script does you may experience scheduling problems on large deployments.
+If you need processing of more complex rules I suggest using [profile matching](https://docs.openstack.org/developer/tripleo-docs/advanced_deployment/profile_matching.html) but since profile matching uses tagging and not pinning for
+you may experience scheduling problems on large deployments.
