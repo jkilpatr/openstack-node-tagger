@@ -5,7 +5,7 @@ Usage:
 
 run the following command in a virtualenv or at the system level if your brave
 
-	pip install git+https://github.com/jkilpatr/openstack-node-tagger
+	pip install git+https://github.com/jkilpatr/ostag
 
 Then run the following to tag nodes
 
