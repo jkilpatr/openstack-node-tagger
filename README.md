@@ -60,5 +60,5 @@ pass, but since most deployments take more than one run I haven't done that yet.
 	  CephStorageSchedulerHints:
 	    'capabilities:node': 'cephstorage-%index%'
 
-If you need processing of more complex rules I suggest using [profile matching](https://docs.openstack.org/developer/tripleo-docs/advanced_deployment/profile_matching.html) but since profile matching uses tagging and not pinning for
+If you need processing of more complex rules I suggest using [profile matching](https://docs.openstack.org/developer/tripleo-docs/advanced_deployment/profile_matching.html) but since profile matching uses tagging and not pinning
 you may experience scheduling problems on large deployments.
