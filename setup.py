@@ -1,3 +1,4 @@
+"""Install ostag."""
 import setuptools
 
 setuptools.setup(
