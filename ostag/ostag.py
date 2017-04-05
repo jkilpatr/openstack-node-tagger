@@ -76,18 +76,18 @@ def clear_tags(conn=None):
     """Clean existing tags/pins from nodes."""
     if conn is None:
         conn = setup_openstack_api()
-        # Issue one thread for each node
-        nodes = deque(lib.Tools.get_uuid_list(conn))
-        clear_threads = []
-        while len(nodes):
-            uuid = nodes.pop()
-            clear_thread = threading.Thread(target=lib.Tools.clean_tags,
-                                            args=(uuid, conn))
-            clear_threads.append(clear_thread)
-            clear_thread.start()
-        for clear_thread in clear_threads:
-            clear_thread.join()
-        return True
+    # Issue one thread for each node
+    nodes = deque(lib.Tools.get_uuid_list(conn))
+    clear_threads = []
+    while len(nodes):
+        uuid = nodes.pop()
+        clear_thread = threading.Thread(target=lib.Tools.clean_tags,
+                                        args=(uuid, conn))
+        clear_threads.append(clear_thread)
+        clear_thread.start()
+    for clear_thread in clear_threads:
+        clear_thread.join()
+    return True
 
 
 def mark_nodes(tag, pin, conn, hint_enabled, hint, num_nodes):
