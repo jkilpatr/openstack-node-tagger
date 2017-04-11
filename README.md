@@ -1,6 +1,10 @@
 # ostag
 A tool for tagging/pinning nodes in OpenStack deployments
 
+Warning: This tool is in Beta, know bugs include an infreqent race condition that causes
+a gap in pin numbers. This happens rarely so if your deploy fails due to 'not enough nodes'
+check that the pinning is seqential and run again if it isn't.
+
 Usage:
 
 run the following command in a virtualenv or at the system level if your brave
