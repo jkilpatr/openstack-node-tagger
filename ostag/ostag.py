@@ -16,6 +16,7 @@ from collections import deque
 import lib.Tools
 import openstack
 import os
+import requests
 import sys
 import threading
 
@@ -67,8 +68,9 @@ def setup_openstack_api():
         'project_name': 'admin',
         'username': os.environ['OS_USERNAME'],
         'password': os.environ['OS_PASSWORD'],
+        'verify': False
     }
-
+    requests.packages.urllib3.disable_warnings()
     return openstack.connection.Connection(**auth_args)
 
 
