@@ -14,7 +14,7 @@
 import argparse
 from collections import deque
 import lib.Tools
-import openstack
+from openstack import connection
 import os
 import requests
 import sys
@@ -71,7 +71,7 @@ def setup_openstack_api():
         'verify': False
     }
     requests.packages.urllib3.disable_warnings()
-    return openstack.connection.Connection(**auth_args)
+    return connection.Connection(**auth_args)
 
 
 def clear_tags(conn=None):
