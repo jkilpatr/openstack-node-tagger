@@ -34,8 +34,8 @@ def get_uuid_list(conn):
 
 def node_details_contain(uuid, pattern, conn):
     """Return true if node details contain the pattern."""
-    properties = conn.bare_metal.get_node(uuid).properties
-    if pattern in str(properties):
+    node = conn.bare_metal.get_node(uuid).node
+    if pattern in str(node):
         return True
     else:
         return False
@@ -45,7 +45,7 @@ def node_already_tagged(uuid, conn):
     """Return true if a node is already tagged."""
     properties = conn.bare_metal.get_node(uuid).properties
     if 'node' in str(properties['capabilities']) \
-        or 'profile' in str(properties['capabilities']):
+            or 'profile' in str(properties['capabilities']):
         return True
     else:
         return False
@@ -75,7 +75,7 @@ def tag_node(nodes, num, tag, pin, conn, hint_enabled=False, hint=""):
         if hint_enabled:
             tries = 0
             while not node_details_contain(uuid, hint, conn) \
-                and node_already_tagged(uuid, conn):
+                    or node_already_tagged(uuid, conn):
                 nodes.appendleft(uuid)
                 uuid = nodes.pop()
                 tries = tries + 1
