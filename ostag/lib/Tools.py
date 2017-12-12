@@ -34,7 +34,7 @@ def get_uuid_list(conn):
 
 def node_details_contain(uuid, pattern, conn):
     """Return true if node details contain the pattern."""
-    node = conn.bare_metal.get_node(uuid).node
+    node = conn.bare_metal.get_node(uuid)
     if pattern in str(node):
         return True
     else:
