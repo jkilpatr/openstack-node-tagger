@@ -1,2 +1,2 @@
 argparse
-openstacksdk
+openstacksdk==0.9.19
